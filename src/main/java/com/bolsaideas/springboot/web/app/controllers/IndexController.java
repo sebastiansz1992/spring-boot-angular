@@ -1,12 +1,13 @@
 package com.bolsaideas.springboot.web.app.controllers;
 
 import com.bolsaideas.springboot.web.app.models.Usuario;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,33 +15,48 @@ import java.util.List;
 @RequestMapping("/app")
 public class IndexController {
 
-    @GetMapping({"/index", "/", "/home"})
-    public String index(Model model) {
-        model.addAttribute("titulo", "Hola Spring Framework Model!");
-        return "index";
-    }
+	@Value("${texto.indexcontroller.index.titulo}")
+	private String textoIndex;
 
-    @GetMapping("/perfil")
-    public String perfil(Model model) {
+	@Value("${texto.indexcontroller.perfil.titulo}")
+	private String textoPerfil;
 
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Sebastian");
-        usuario.setApellido("Agudelo Marin");
-        usuario.setEmail("sebascarman@gmail.com");
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("titulo", "Perfil del usuario: ".concat(usuario.getNombre()));
+	@Value("${texto.indexcontroller.listar.titulo}")
+	private String textoListar;
 
-        return "perfil";
-    }
+	@GetMapping({"/index", "/", "/home"})
+	public String index(Model model) {
+		model.addAttribute("titulo", textoIndex);
+		return "index";
+	}
 
-    @GetMapping("/listar")
-    public String listar(Model model) {
-        List<Usuario> usuarios = Arrays.asList(new Usuario("Sebastian", "Agudelo Marin", "sebascarman@gmail.com"),
-                new Usuario("John", "Doe", "john@gmail.com"),
-                new Usuario("Jane", "Doe", "jane@gmail.com"),
-                new Usuario("Dani", "Ayala", "dani@gmail.com"));
-        model.addAttribute("titulo", "Listado de usuarios");
-        model.addAttribute("usuarios", usuarios);
-        return "listar";
-    }
+	@GetMapping("/perfil")
+	public String perfil(Model model) {
+
+		Usuario usuario = new Usuario();
+		usuario.setNombre("Sebastian");
+		usuario.setApellido("Agudelo Marin");
+		usuario.setEmail("sebascarman@gmail.com");
+		model.addAttribute("usuario", usuario);
+		model.addAttribute("titulo", textoPerfil.concat(usuario.getNombre()));
+
+		return "perfil";
+	}
+
+	@GetMapping("/listar")
+	public String listar(Model model) {
+		model.addAttribute("titulo", textoListar);
+		return "listar";
+	}
+
+	@ModelAttribute("usuarios")
+	public List<Usuario> poblarUsuarios() {
+		List<Usuario> usuarios = Arrays.asList(
+				new Usuario("Sebastian", "Agudelo Marin", "sebascarman@gmail.com"),
+				new Usuario("John", "Doe", "john@gmail.com"),
+				new Usuario("Jane", "Doe", "jane@gmail.com"),
+				new Usuario("Dani", "Ayala", "dani@gmail.com")
+		);
+		return usuarios;
+	}
 }
